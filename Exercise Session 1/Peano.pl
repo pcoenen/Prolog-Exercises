@@ -14,3 +14,16 @@ maximum(X,Y,X):-
     greater_than(X,Y).
 maximum(X,Y,Y):-
     greater_than(Y,X).
+
+%Extra
+
+min2(X,Y,Z):-
+    peano_plus(Y,Z,X).
+
+div(X,Y,zero,X):-
+    greater_than(Y,X),
+    !.
+div(zero,_,zero,zero):- !.
+div(X,Y,s(D),Z):-
+    min(X,Y,XN),
+    div(XN,Y,D,Z).
