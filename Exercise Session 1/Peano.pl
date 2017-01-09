@@ -20,10 +20,10 @@ maximum(X,Y,Y):-
 min2(X,Y,Z):-
     peano_plus(Y,Z,X).
 
+div(zero,_,zero,zero):- !.
 div(X,Y,zero,X):-
     greater_than(Y,X),
     !.
-div(zero,_,zero,zero):- !.
 div(X,Y,s(D),Z):-
     min(X,Y,XN),
     div(XN,Y,D,Z).
