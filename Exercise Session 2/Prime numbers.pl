@@ -20,4 +20,3 @@ delete(V,[E|L],R):-
     !.
 delete(V,[E|L],[E|R]):-
     delete(V,L,R).
-
