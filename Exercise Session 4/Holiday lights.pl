@@ -71,5 +71,4 @@ calctrip(N,U,[V-C|S]):-
         highway(V,N,C),
         \+ member(highway(V,N,C),U),
         calctrip(V,[highway(V,N,C)|U],S)
-    ).
-    
+    ).    
