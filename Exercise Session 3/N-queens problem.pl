@@ -14,4 +14,3 @@ check(N,X,P,[E|R]):-
     E =\= X - P,
     PN is P + 1,
     check(N,X,PN,R).
-
