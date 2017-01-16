@@ -32,25 +32,10 @@ get_revenue_for_transactions(SC,[_|R],Revenue):-
     get_revenue_for_transactions(SC,R,Revenue).
     
 red_place_store(NewPos, NewRevenues):-
-    get_all_costumers(CostumerList),
-    iterate_cos(CostumerList,Purchases,NewPos),
-    get_all_storechain(Stores),
-    iterate_stores(Stores,Purchases,NewRevenues).
+    findall(Purs,(customer(Cust,_, _, Needs), member(needs(Prod,_),Needs), calc_buy(Cust,Prod,Purs,NewPos)),PursList),
+    findall(Rev,(storechain(Shop),get_revenue_for_transactions(Shop,PursList,Rev)),NewRevenues).
 
-iterate_stores([],_,[]).
-iterate_stores([S|R],P,[NR1|NR]):-
-    get_revenue_for_transactions(S,P,NR1),
-    iterate_stores(R,P,NR).
-    
-
-iterate_cos([],[],_).
-iterate_cos([Costumer|CS],R,NewPos):-
-    needs_products(Costumer,Products),
-    iterate_prod(Costumer,Products,R1,NewPos),
-    iterate_cos(CS,R2,NewPos),
-    append(R1,R2,R).
-
-iterate_prod(C,[P|PS],[purchase(C,Amount,Product,PriceC,StoreC,PosC)|R],NewPos):-
+calc_buy(C,P,purchase(C,Amount,Product,PriceC,StoreC,PosC),NewPos):-
     cust_buys(C,P,purchase(C,Amount,Product,Price,Store,StorePos)),
     customer(C,CPos,CustStamina,_),
     distance(CPos,NewPos,DisN),
@@ -74,13 +59,10 @@ iterate_prod(C,[P|PS],[purchase(C,Amount,Product,PriceC,StoreC,PosC)|R],NewPos):
             StoreC = Store,
             PosC = StorePos
         )
-    ),
-    iterate_prod(C,PS,R,NewPos).
+    ).
 
-iterate_prod(_,[],[],_).
-iterate_prod(C,[P|PS],[purchase(C,Amount,Product,Price,Store,StorePos)|R],NewPos):-
-    cust_buys(C,P,purchase(C,Amount,Product,Price,Store,StorePos)),
-    iterate_prod(C,PS,R,NewPos).
+calc_buy(C,P,purchase(C,Amount,Product,Price,Store,StorePos),_):-
+    cust_buys(C,P,purchase(C,Amount,Product,Price,Store,StorePos)).
 
 
 new_price(Pos,Product,Price):-
@@ -88,16 +70,7 @@ new_price(Pos,Product,Price):-
     length(List,L),
     (
     L =:= 0 ->
-        Price = 0
+        Price = 100
     ;
         sort(List,[Price|_])
     ).
-
-get_all_costumers(CostumerList):-
-    findall(C,customer(C,_,_,_),CostumerList).
-
-needs_products(Costumer,Products):-
-    findall(P,(customer(Costumer,_,_,NL),member(needs(P,_),NL)),Products).
-
-get_all_storechain(Stores):-
-    findall(S,storechain(S),Stores).
